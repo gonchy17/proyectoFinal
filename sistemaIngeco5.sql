@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     24/09/2017 20:44:31                          */
+/* Created on:     06/07/2018 14:52:27                          */
 /*==============================================================*/
 
 
@@ -21,7 +21,8 @@ create table DOCENTE
 (
    ID_USUARIO           int not null,
    NOMBRE_USDOC         varchar(10) not null,
-   PASSWD               varchar(30) not null,
+   PASSWD               varchar(7) not null,
+   TEMA_DESIGNADO       int not null,
    primary key (ID_USUARIO)
 );
 
@@ -30,10 +31,11 @@ create table DOCENTE
 /*==============================================================*/
 create table ESTUDIANTE
 (
-   ID_USUARIO           int not null,
+   ID_USUARIO           int not null,   
    NOMBRE_USEST         varchar(10) not null,
-   PASSWD               varchar(30) not null,
+   PASSWD               varchar(7) not null,
    PORC_AVANCE          tinyint,
+   ESTADO		tinyint,
    primary key (ID_USUARIO)
 );
 
@@ -43,9 +45,11 @@ create table ESTUDIANTE
 create table EXAMEN
 (
    COD_EXAMEN           varchar(20) not null,
-   COD_TEMA             varchar(30) not null,
-   PREGUNTA             varchar(100) not null,
-   RESPUESTA            varchar(100) not null,
+   COD_TEMA             varchar(40) not null,
+   ID_TEMA              int not null,
+   PREGUNTA             longblob null,
+   RESPUESTA            longblob null,
+   ID_USUARIO           int not null,
    primary key (COD_EXAMEN)
 );
 
@@ -54,11 +58,12 @@ create table EXAMEN
 /*==============================================================*/
 create table TEMA
 (
-   COD_TEMA             varchar(30) not null,
-   FORMULAS             varchar(100) not null,
-   CONCEPTOS            varchar(200) not null,
+   ID_TEMA              int not null auto_increment,
+   COD_TEMA             varchar(40) not null,
+   FORMULAS             longblob not null,
+   CONCEPTOS            varchar(200) not null, 
    ID_USUARIO           int not null,
-   primary key (COD_TEMA)
+   primary key (ID_TEMA)
 );
 
 /*==============================================================*/
@@ -66,11 +71,11 @@ create table TEMA
 /*==============================================================*/
 create table USUARIO
 (
-   ID_USUARIO           int not null auto_increment,   
+   ID_USUARIO           int not null auto_increment,	
    NOMBRES              varchar(30) not null,
    APELLIDOS            varchar(30) not null,
-   ROL                  varchar(10) not null,
-   primary key (ID_USUARIO)
+   ROL                  varchar(10) not null,  
+   primary key (ID_USUARIO) 
 );
 
 alter table DOCENTE add constraint FK_USUARIO_DOCENTE foreign key (ID_USUARIO)
@@ -79,8 +84,8 @@ alter table DOCENTE add constraint FK_USUARIO_DOCENTE foreign key (ID_USUARIO)
 alter table ESTUDIANTE add constraint FK_USUARIO_ESTUDIANTE foreign key (ID_USUARIO)
       references USUARIO (ID_USUARIO) on delete restrict on update restrict;
 
-alter table EXAMEN add constraint FK_EXAMEN_TEMA foreign key (COD_TEMA)
-      references TEMA (COD_TEMA) on delete restrict on update restrict;
+alter table EXAMEN add constraint FK_TEMA_EXAMEN foreign key (ID_TEMA)
+      references TEMA (ID_TEMA) on delete cascade on update restrict;
 
 alter table TEMA add constraint FK_TEMA_USUARIO foreign key (ID_USUARIO)
       references USUARIO (ID_USUARIO) on delete restrict on update restrict;
